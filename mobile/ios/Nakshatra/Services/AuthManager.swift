@@ -90,20 +90,23 @@ class AuthManager: ObservableObject {
         isDemoMode = true
         currentUser = User(
             id: "demo-user",
-            name: "Demo User",
             email: "demo@nakshatra.app",
             phone: nil,
-            subscriptionTier: .premiumPlus,
+            name: "Demo User",
             birthDetails: BirthDetails(
-                date: "January 15, 1990",
-                time: "10:30 AM",
+                date: "1990-01-15",
+                time: "10:30:00",
                 latitude: 28.6139,
                 longitude: 77.2090,
                 timezone: "Asia/Kolkata",
                 city: "New Delhi",
                 country: "India"
             ),
-            createdAt: Date()
+            preferredChartStyle: .northIndian,
+            preferredSystem: .parashari,
+            preferredLanguage: .english,
+            subscriptionTier: .premiumPlus,
+            subscriptionExpiresAt: nil
         )
         isAuthenticated = true
     }
