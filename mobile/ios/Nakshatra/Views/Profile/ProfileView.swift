@@ -324,12 +324,20 @@ struct PlanCard: View {
                 }
             }
 
-            Button(action: {}) {
-                Text(name == "Free" ? "Current Plan" : "Subscribe")
-                    .frame(maxWidth: .infinity)
+            if name == "Free" {
+                Button(action: {}) {
+                    Text("Current Plan")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(SecondaryButtonStyle())
+                .disabled(true)
+            } else {
+                Button(action: {}) {
+                    Text("Subscribe")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(PrimaryButtonStyle())
             }
-            .buttonStyle(name == "Free" ? SecondaryButtonStyle() : PrimaryButtonStyle())
-            .disabled(name == "Free")
         }
         .padding()
         .background(Theme.backgroundColor)
