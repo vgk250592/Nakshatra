@@ -70,6 +70,13 @@ struct OnboardingView: View {
                             .font(Theme.Typography.subheadline)
                             .foregroundColor(Theme.primaryColor)
                     }
+
+                    Button(action: { authManager.loginAsDemo() }) {
+                        Text("Try Demo Mode")
+                            .font(Theme.Typography.caption)
+                            .foregroundColor(Theme.textSecondary)
+                    }
+                    .padding(.top, Theme.Spacing.sm)
                 }
             }
             .padding(Theme.Spacing.lg)
@@ -185,6 +192,15 @@ struct LoginView: View {
                 .buttonStyle(PrimaryButtonStyle())
                 .disabled(authManager.isLoading)
 
+                Button(action: {
+                    authManager.loginAsDemo()
+                    dismiss()
+                }) {
+                    Text("Skip - Try Demo Mode")
+                        .font(Theme.Typography.subheadline)
+                        .foregroundColor(Theme.primaryColor)
+                }
+
                 Spacer()
             }
             .padding()
@@ -268,6 +284,15 @@ struct RegisterView: View {
                 }
                 .buttonStyle(PrimaryButtonStyle())
                 .disabled(authManager.isLoading || !isValid)
+
+                Button(action: {
+                    authManager.loginAsDemo()
+                    dismiss()
+                }) {
+                    Text("Skip - Try Demo Mode")
+                        .font(Theme.Typography.subheadline)
+                        .foregroundColor(Theme.primaryColor)
+                }
 
                 Spacer()
 

@@ -80,6 +80,32 @@ class AuthManager: ObservableObject {
         clearToken()
         currentUser = nil
         isAuthenticated = false
+        isDemoMode = false
+    }
+
+    // MARK: - Demo Mode
+    @Published var isDemoMode = false
+
+    func loginAsDemo() {
+        isDemoMode = true
+        currentUser = User(
+            id: "demo-user",
+            name: "Demo User",
+            email: "demo@nakshatra.app",
+            phone: nil,
+            subscriptionTier: .premiumPlus,
+            birthDetails: BirthDetails(
+                date: "January 15, 1990",
+                time: "10:30 AM",
+                latitude: 28.6139,
+                longitude: 77.2090,
+                timezone: "Asia/Kolkata",
+                city: "New Delhi",
+                country: "India"
+            ),
+            createdAt: Date()
+        )
+        isAuthenticated = true
     }
 
     private func fetchCurrentUser() {
