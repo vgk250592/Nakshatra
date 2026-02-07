@@ -5,6 +5,9 @@ struct ProfileView: View {
     @EnvironmentObject var userPreferences: UserPreferences
     @State private var showEditBirthDetails = false
     @State private var showSubscriptionPlans = false
+    @State private var selectedChartStyle: ChartStyle = .northIndian
+    @State private var selectedSystem: AstrologySystem = .parashari
+    @State private var selectedLanguage: Language = .english
 
     var body: some View {
         NavigationStack {
@@ -150,23 +153,37 @@ struct ProfileView: View {
     // MARK: - Preferences Rows
     private var preferencesRows: some View {
         Group {
-            Picker("Chart Style", selection: $userPreferences.chartStyle) {
+            Picker("Chart Style", selection: $selectedChartStyle) {
                 ForEach(ChartStyle.allCases, id: \.self) { style in
                     Text(style.displayName).tag(style)
                 }
             }
+            .onChange(of: selectedChartStyle) { _, newValue in
+                userPreferences.chartStyle = newValue
+            }
 
-            Picker("Astrology System", selection: $userPreferences.astrologySystem) {
+            Picker("Astrology System", selection: $selectedSystem) {
                 ForEach(AstrologySystem.allCases, id: \.self) { system in
                     Text(system.displayName).tag(system)
                 }
             }
+            .onChange(of: selectedSystem) { _, newValue in
+                userPreferences.astrologySystem = newValue
+            }
 
-            Picker("Language", selection: $userPreferences.language) {
+            Picker("Language", selection: $selectedLanguage) {
                 ForEach(Language.allCases, id: \.self) { lang in
                     Text(lang.displayName).tag(lang)
                 }
             }
+            .onChange(of: selectedLanguage) { _, newValue in
+                userPreferences.language = newValue
+            }
+        }
+        .onAppear {
+            selectedChartStyle = userPreferences.chartStyle
+            selectedSystem = userPreferences.astrologySystem
+            selectedLanguage = userPreferences.language
         }
     }
 

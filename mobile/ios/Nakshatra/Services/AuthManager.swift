@@ -1,7 +1,9 @@
 import Foundation
 import SwiftUI
+import Combine
 
 /// Manages user authentication state
+@MainActor
 class AuthManager: ObservableObject {
     @Published var isAuthenticated = false
     @Published var currentUser: User?
@@ -34,7 +36,8 @@ class AuthManager: ObservableObject {
 
     // MARK: - Authentication Methods
     func register(name: String, email: String?, phone: String?, password: String) async {
-        await MainActor.run { isLoading = true; error = nil }
+        isLoading = true
+        error = nil
 
         do {
             let response = try await apiService.register(
@@ -44,21 +47,18 @@ class AuthManager: ObservableObject {
                 password: password
             )
             saveToken(response.token)
-            await MainActor.run {
-                currentUser = response.user
-                isAuthenticated = true
-                isLoading = false
-            }
+            currentUser = response.user
+            isAuthenticated = true
+            isLoading = false
         } catch {
-            await MainActor.run {
-                self.error = error.localizedDescription
-                isLoading = false
-            }
+            self.error = error.localizedDescription
+            isLoading = false
         }
     }
 
     func login(email: String?, phone: String?, password: String) async {
-        await MainActor.run { isLoading = true; error = nil }
+        isLoading = true
+        error = nil
 
         do {
             let response = try await apiService.login(
@@ -67,16 +67,12 @@ class AuthManager: ObservableObject {
                 password: password
             )
             saveToken(response.token)
-            await MainActor.run {
-                currentUser = response.user
-                isAuthenticated = true
-                isLoading = false
-            }
+            currentUser = response.user
+            isAuthenticated = true
+            isLoading = false
         } catch {
-            await MainActor.run {
-                self.error = error.localizedDescription
-                isLoading = false
-            }
+            self.error = error.localizedDescription
+            isLoading = false
         }
     }
 
@@ -90,28 +86,40 @@ class AuthManager: ObservableObject {
         Task {
             do {
                 let user = try await apiService.getCurrentUser()
-                await MainActor.run {
-                    self.currentUser = user
-                }
+                self.currentUser = user
             } catch {
                 // Token might be invalid, log out
-                await MainActor.run {
-                    self.logout()
-                }
+                self.logout()
             }
         }
     }
 }
 
 /// Manages user preferences
+@MainActor
 class UserPreferences: ObservableObject {
-    @AppStorage("chartStyle") var chartStyle: ChartStyle = .northIndian
-    @AppStorage("astrologySystem") var astrologySystem: AstrologySystem = .parashari
-    @AppStorage("language") var language: Language = .english
+    @AppStorage("chartStyle") private var chartStyleRaw: String = ChartStyle.northIndian.rawValue
+    @AppStorage("astrologySystem") private var astrologySystemRaw: String = AstrologySystem.parashari.rawValue
+    @AppStorage("language") private var languageRaw: String = Language.english.rawValue
     @AppStorage("hasCompletedOnboarding") var hasCompletedOnboarding = false
     @AppStorage("birthDetailsEntered") var birthDetailsEntered = false
 
     @Published var birthDetails: BirthDetails?
+
+    var chartStyle: ChartStyle {
+        get { ChartStyle(rawValue: chartStyleRaw) ?? .northIndian }
+        set { chartStyleRaw = newValue.rawValue }
+    }
+
+    var astrologySystem: AstrologySystem {
+        get { AstrologySystem(rawValue: astrologySystemRaw) ?? .parashari }
+        set { astrologySystemRaw = newValue.rawValue }
+    }
+
+    var language: Language {
+        get { Language(rawValue: languageRaw) ?? .english }
+        set { languageRaw = newValue.rawValue }
+    }
 
     func saveBirthDetails(_ details: BirthDetails) {
         birthDetails = details
